@@ -464,7 +464,9 @@ function render() {
 function toast(t) { const e = $('#toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('on'), 2800); }
 const CACHE = 'inventario-v2';
 function store() { try { localStorage.setItem(CACHE, JSON.stringify(DB)); } catch (e) { /* cache opcional */ } }
-function setDB(d) { DB = typeof d === 'string' ? JSON.parse(d) : d; store(); build(); }
+const ID_KEYS = ['id', 'desejo', 'versao', 'produto', 'item', 'compra', 'loja'];
+function idsTexto() { Object.values(DB).forEach((linhas) => Array.isArray(linhas) && linhas.forEach((o) => ID_KEYS.forEach((k) => { if (o[k] !== undefined && o[k] !== '') o[k] = String(o[k]); }))); }
+function setDB(d) { DB = typeof d === 'string' ? JSON.parse(d) : d; idsTexto(); store(); build(); }
 function repaint() { const a = document.activeElement; if (!(a && /INPUT|SELECT/.test(a.tagName))) render(); }
 
 const fila = [];
@@ -613,7 +615,7 @@ document.addEventListener('submit', (e) => {
 $('#collapse').onclick = () => { $('#app').classList.toggle('mini'); const m = $('#app').classList.contains('mini'); $('#collapse').querySelector('span').textContent = m ? '⇥' : '⇤'; $('#collapse').setAttribute('aria-label', m ? 'Expandir menu' : 'Recolher menu'); };
 $('#burger').onclick = () => $('#app').classList.add('open');
 $('#scrim').onclick = () => $('#app').classList.remove('open');
-try { const c = localStorage.getItem(CACHE); if (c) { DB = JSON.parse(c); build(); render(); } } catch (e) { DB = null; }
+try { const c = localStorage.getItem(CACHE); if (c) { setDB(c); render(); } } catch (e) { DB = null; }
 load();
 </script>
 
